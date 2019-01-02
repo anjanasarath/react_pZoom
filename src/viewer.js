@@ -65,6 +65,8 @@ export default class ReactSVGPanZoom extends React.Component {
     this.ViewerDOM = null;
 
     this.autoPanLoop = this.autoPanLoop.bind(this);
+    this.previousTool = null;
+    this.mouseEvents = false;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -227,10 +229,50 @@ export default class ReactSVGPanZoom extends React.Component {
     this.autoPanIsRunning = false;
   }
 
+  onMouseDown1 = (event, viewerDom) => {
+    let nextValue = onMouseDown(event, viewerDom, this.getTool(), this.getValue(), this.props);
+    if (this.getValue() !== nextValue) this.setValue(nextValue);
+    this.handleViewerEvent(event);
+  }
+
+  onMouseMove1 = (event, viewerDom) => {
+    let {left, top} = viewerDom.getBoundingClientRect();
+    let x = event.clientX - Math.round(left);
+    let y = event.clientY - Math.round(top);
+
+    let nextValue = onMouseMove(event, viewerDom, this.getTool(), this.getValue(), this.props, {x, y});
+    if (this.getValue() !== nextValue) this.setValue(nextValue);
+    this.setState({viewerX: x, viewerY: y});
+    this.handleViewerEvent(event);
+  }
+
+  onMouseUp1 = (event, viewerDom) => {
+    let nextValue = onMouseUp(event, viewerDom, this.getTool(), this.getValue(), this.props);
+    if (this.getValue() !== nextValue) this.setValue(nextValue);
+    this.handleViewerEvent(event);
+  }
+
+  miniatureOnMouseDown = (event, viewerDom) => {
+    //this.previousTool = this.getTool();
+    this.changeTool(TOOL_PAN);
+    this.onMouseDown1(event, viewerDom);
+  }
+
+  miniatureOnMouseMove = (event, viewerDom) => {
+    this.onMouseMove1(event, viewerDom);
+  }
+
+  miniatureOnMouseUp = (event, viewerDom) => {
+    //this.changeTool(this.previousTool);
+    this.onMouseUp1(event, viewerDom);
+  }
+
   render() {
     let {props, state: {viewerX, viewerY}} = this;
     let tool = this.getTool();
     let value = this.getValue();
+    //console.log("value", value);
+    //console.log("svg value", toSVG(value));
     let {customToolbar: CustomToolbar, customMiniature: CustomMiniature} = props;
 
     let panningWithToolAuto = tool === TOOL_AUTO
@@ -265,26 +307,9 @@ export default class ReactSVGPanZoom extends React.Component {
           height={value.viewerHeight}
           style={this.getSvgStyle(cursor)}
 
-          onMouseDown={event => {
-            let nextValue = onMouseDown(event, this.ViewerDOM, this.getTool(), this.getValue(), this.props);
-            if (this.getValue() !== nextValue) this.setValue(nextValue);
-            this.handleViewerEvent(event);
-          }}
-          onMouseMove={event => {
-            let {left, top} = this.ViewerDOM.getBoundingClientRect();
-            let x = event.clientX - Math.round(left);
-            let y = event.clientY - Math.round(top);
-
-            let nextValue = onMouseMove(event, this.ViewerDOM, this.getTool(), this.getValue(), this.props, {x, y});
-            if (this.getValue() !== nextValue) this.setValue(nextValue);
-            this.setState({viewerX: x, viewerY: y});
-            this.handleViewerEvent(event);
-          }}
-          onMouseUp={event => {
-            let nextValue = onMouseUp(event, this.ViewerDOM, this.getTool(), this.getValue(), this.props);
-            if (this.getValue() !== nextValue) this.setValue(nextValue);
-            this.handleViewerEvent(event);
-          }}
+          onMouseDown={event => {this.mouseEvents = true; this.onMouseDown1(event, this.ViewerDOM);}}
+          onMouseMove={event => {if(this.mouseEvents) this.onMouseMove1(event, this.ViewerDOM);}}
+          onMouseUp={event => {if(this.mouseEvents) {this.onMouseUp1(event, this.ViewerDOM);this.mouseEvents = false;}}}
 
           onClick={event => {
             this.handleViewerEvent(event)
@@ -398,6 +423,9 @@ export default class ReactSVGPanZoom extends React.Component {
             background={this.props.miniatureBackground}
             width={this.props.miniatureWidth}
             height={this.props.miniatureHeight}
+            onMouseDown={this.miniatureOnMouseDown}
+            onMouseMove={this.miniatureOnMouseMove}
+            onMouseUp={this.miniatureOnMouseUp}
           >
             {props.children.props.children}
           </CustomMiniature>

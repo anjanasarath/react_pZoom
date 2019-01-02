@@ -16,15 +16,29 @@ export default class Miniature extends React.Component {
 
     this.state = {
       svgElem: null,
-      viewerBox: null
+      viewerDOM: null,
+      draggable: false
     }
   }
 
+  miniMaskOnMouseDown = (event) => {
+    this.props.onMouseDown(event, this.state.viewerDOM);
+  }
+
+  miniMaskOnMouseMove = (event) => {
+    this.props.onMouseMove(event, this.state.viewerDOM);
+  }
+
+  miniMaskOnMouseUp = (event) => {
+    this.props.onMouseUp(event, this.state.viewerDOM);
+  }
+
   makeDraggable = (evt) => {
-    this.setState({svgElem: evt.currentTarget});
+    this.setState({svgElem: evt.currentTarget, draggable: true});
   }
 
   stopDragging = (evt) => {
+    this.setState({draggable: false});
   }
 
   render() {
@@ -70,7 +84,7 @@ export default class Miniature extends React.Component {
     return (
       <div role="navigation" style={style}>
         <svg
-          ref={vB => {this.state.viewerBox = vB;}}
+          ref={vB => {this.state.viewerDOM = vB;}}
           width={miniatureWidth}
           height={miniatureHeight}
           onMouseEnter={this.makeDraggable}
@@ -96,7 +110,11 @@ export default class Miniature extends React.Component {
                 x2={x2}
                 y2={y2}
                 zoomToFit={zoomToFit}
+                onMouseDown={this.miniMaskOnMouseDown}
+                onMouseMove={this.miniMaskOnMouseMove}
+                onMouseUp={this.miniMaskOnMouseUp}
                 svgElement={this.state.svgElem}
+                draggable={this.state.draggable}
               />
 
             </g>

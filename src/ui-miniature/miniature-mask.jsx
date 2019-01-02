@@ -7,72 +7,21 @@ const prefixID = 'react-svg-pan-zoom_miniature'
 class MiniatureMask extends React.Component {
   constructor(props, context) {
     super(props, context);
-    this.zoomElem = React.createRef();
-    this.maskElem = React.createRef();
-
-    this.state = {
-      offset: null,
-      draggable: false
-    }
   }
 
-    startDrag = (evt) => {
-
-      const zoomElem = this.zoomElem.current;
-      const scope = this.getMousePosition(evt);
-      const zoomElemX = parseFloat(zoomElem.getAttributeNS(null, "x"));
-      const zoomElemY = parseFloat(zoomElem.getAttributeNS(null, "y"));
-      const zoomElemW = parseFloat(zoomElem.getAttributeNS(null, "width"));
-      const zoomElemH = parseFloat(zoomElem.getAttributeNS(null, "height"));
-
-      if(scope.x > zoomElemX && scope.x < zoomElemX + zoomElemW && scope.y > zoomElemY && scope.y < zoomElemY + zoomElemH) {
-        this.state.draggable = true;
-        this.state.offset = {
-          x: scope.x - zoomElemX,
-          y: scope.y - zoomElemY
-        };
-      }
+  startDrag = (evt) => {
+    evt.preventDefault();
+    this.props.onMouseDown(evt);
   }
 
   drag = (evt) => {
-    if (this.state.draggable) {
-     const svgCoordinates = this.getMousePosition(evt);
-
-     const maskElemnt = this.maskElem.current;
-     const zoomElemnt = this.zoomElem.current;
-
-     const maskElemntX = parseFloat(maskElemnt.getAttributeNS(null, "x"));
-     const maskElemntY = parseFloat(maskElemnt.getAttributeNS(null, "y"));
-     const maskElemntW = parseFloat(maskElemnt.getAttributeNS(null, "width"));
-     const maskElemntH = parseFloat(maskElemnt.getAttributeNS(null, "height"));
-
-     const zoomElemntX = svgCoordinates.x-this.state.offset.x;
-     const zoomElemntY = svgCoordinates.y-this.state.offset.y;
-     const zoomElemntW = parseFloat(zoomElemnt.getAttributeNS(null, "width"));
-     const zoomElemntH = parseFloat(zoomElemnt.getAttributeNS(null, "height"));
-
-     if(zoomElemntX > maskElemntX && (zoomElemntX + zoomElemntW) < (maskElemntX + maskElemntW) && zoomElemntY > maskElemntY && (zoomElemntY + zoomElemntH) < (maskElemntY + maskElemntH)) {
-        evt.preventDefault();
-        zoomElemnt.setAttributeNS(null, "x", zoomElemntX);
-        zoomElemnt.setAttributeNS(null, "y", zoomElemntY);
-    }
-   }
+    evt.preventDefault();
+    this.props.onMouseMove(evt);
   }
 
   endDrag = (evt) => {
-    this.state.draggable = false;
-  }
-
-  getMousePosition = (evt) => {
-    var pt = this.props.svgElement.createSVGPoint();
-    pt.x = evt.clientX;
-    pt.y = evt.clientY;
-    var result = pt.matrixTransform(evt.target.getScreenCTM().inverse());
-
-    return {
-      x: result.x,
-      y: result.y
-    };
+    evt.preventDefault();
+    this.props.onMouseUp(evt);
   }
 
   render() {
@@ -86,8 +35,8 @@ class MiniatureMask extends React.Component {
       <g>
         <defs>
           <mask id={maskID}>
-            <rect ref={this.maskElem} x="0" y="0" width={SVGWidth} height={SVGHeight} fill="#ffffff"/>
-            <rect ref={this.zoomElem} x={x1} y={y1} width={x2 - x1} height={y2 - y1}/>
+            <rect x="0" y="0" width={SVGWidth} height={SVGHeight} fill="#ffffff"/>
+            <rect x={x1} y={y1} width={x2 - x1} height={y2 - y1}/>
           </mask>
         </defs>
 
