@@ -229,42 +229,53 @@ export default class ReactSVGPanZoom extends React.Component {
     this.autoPanIsRunning = false;
   }
 
-  onMouseDown1 = (event, viewerDom) => {
-    let nextValue = onMouseDown(event, viewerDom, this.getTool(), this.getValue(), this.props);
-    if (this.getValue() !== nextValue) this.setValue(nextValue);
-    this.handleViewerEvent(event);
-  }
-
-  onMouseMove1 = (event, viewerDom) => {
+  getCoordinates = (event, viewerDom, zoomToFit, isMiniMapCoord) => {
     let {left, top} = viewerDom.getBoundingClientRect();
     let x = event.clientX - Math.round(left);
     let y = event.clientY - Math.round(top);
 
-    let nextValue = onMouseMove(event, viewerDom, this.getTool(), this.getValue(), this.props, {x, y});
+    if(isMiniMapCoord) {
+      return {x: -x/zoomToFit, y: -y/zoomToFit};
+    } else {
+      return {x, y};
+    }
+  }
+
+  onMouseDown1 = (event, viewerDom, zoomToFit, isMiniMapCoord) => {
+    let coords = this.getCoordinates(event, viewerDom, zoomToFit, isMiniMapCoord);
+    let nextValue = onMouseDown(event, viewerDom, this.getTool(), this.getValue(), this.props, coords);
     if (this.getValue() !== nextValue) this.setValue(nextValue);
-    this.setState({viewerX: x, viewerY: y});
     this.handleViewerEvent(event);
   }
 
-  onMouseUp1 = (event, viewerDom) => {
-    let nextValue = onMouseUp(event, viewerDom, this.getTool(), this.getValue(), this.props);
+  onMouseMove1 = (event, viewerDom, zoomToFit, isMiniMapCoord) => {
+    let coords = this.getCoordinates(event, viewerDom, zoomToFit, isMiniMapCoord);
+    let nextValue = onMouseMove(event, viewerDom, this.getTool(), this.getValue(), this.props, coords);
+    if (this.getValue() !== nextValue) this.setValue(nextValue);
+    this.setState({viewerX: coords.x, viewerY: coords.y});
+    this.handleViewerEvent(event);
+  }
+
+  onMouseUp1 = (event, viewerDom, zoomToFit, isMiniMapCoord) => {
+    let coords = this.getCoordinates(event, viewerDom, zoomToFit, isMiniMapCoord);
+    let nextValue = onMouseUp(event, viewerDom, this.getTool(), this.getValue(), this.props, coords);
     if (this.getValue() !== nextValue) this.setValue(nextValue);
     this.handleViewerEvent(event);
   }
 
-  miniatureOnMouseDown = (event, viewerDom) => {
+  miniatureOnMouseDown = (event, viewerDom, zoomToFit) => {
     //this.previousTool = this.getTool();
     this.changeTool(TOOL_PAN);
-    this.onMouseDown1(event, viewerDom);
+    this.onMouseDown1(event, viewerDom, zoomToFit, true);
   }
 
-  miniatureOnMouseMove = (event, viewerDom) => {
-    this.onMouseMove1(event, viewerDom);
+  miniatureOnMouseMove = (event, viewerDom, zoomToFit) => {
+    this.onMouseMove1(event, viewerDom, zoomToFit, true);
   }
 
-  miniatureOnMouseUp = (event, viewerDom) => {
+  miniatureOnMouseUp = (event, viewerDom, zoomToFit) => {
     //this.changeTool(this.previousTool);
-    this.onMouseUp1(event, viewerDom);
+    this.onMouseUp1(event, viewerDom, zoomToFit, true);
   }
 
   render() {
@@ -307,9 +318,9 @@ export default class ReactSVGPanZoom extends React.Component {
           height={value.viewerHeight}
           style={this.getSvgStyle(cursor)}
 
-          onMouseDown={event => {this.mouseEvents = true; this.onMouseDown1(event, this.ViewerDOM);}}
-          onMouseMove={event => {if(this.mouseEvents) this.onMouseMove1(event, this.ViewerDOM);}}
-          onMouseUp={event => {if(this.mouseEvents) {this.onMouseUp1(event, this.ViewerDOM);this.mouseEvents = false;}}}
+          onMouseDown={event => {this.mouseEvents = true; this.onMouseDown1(event, this.ViewerDOM, 1, false);}}
+          onMouseMove={event => {if(this.mouseEvents) this.onMouseMove1(event, this.ViewerDOM, 1, false);}}
+          onMouseUp={event => {if(this.mouseEvents) {this.onMouseUp1(event, this.ViewerDOM, 1, false);this.mouseEvents = false;}}}
 
           onClick={event => {
             this.handleViewerEvent(event)

@@ -21,16 +21,29 @@ export default class Miniature extends React.Component {
     }
   }
 
+  getZoomToFit = () => {
+    let {value, width: miniatureWidth, height: miniatureHeight} = this.props;
+    let {SVGWidth, SVGHeight} = value;
+
+    let ratio = SVGHeight / SVGWidth;
+
+    let zoomToFit = ratio >= 1
+      ? miniatureHeight / SVGHeight
+      : miniatureWidth / SVGWidth;
+
+    return zoomToFit;
+  }
+
   miniMaskOnMouseDown = (event) => {
-    this.props.onMouseDown(event, this.state.viewerDOM);
+    this.props.onMouseDown(event, this.state.viewerDOM, this.getZoomToFit());
   }
 
   miniMaskOnMouseMove = (event) => {
-    this.props.onMouseMove(event, this.state.viewerDOM);
+    this.props.onMouseMove(event, this.state.viewerDOM, this.getZoomToFit());
   }
 
   miniMaskOnMouseUp = (event) => {
-    this.props.onMouseUp(event, this.state.viewerDOM);
+    this.props.onMouseUp(event, this.state.viewerDOM, this.getZoomToFit());
   }
 
   makeDraggable = (evt) => {
