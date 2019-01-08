@@ -264,7 +264,6 @@ export default class ReactSVGPanZoom extends React.Component {
   }
 
   miniatureOnMouseDown = (event, viewerDom, zoomToFit) => {
-    //this.previousTool = this.getTool();
     this.changeTool(TOOL_PAN);
     this.onMouseDown1(event, viewerDom, zoomToFit, true);
   }
@@ -274,7 +273,6 @@ export default class ReactSVGPanZoom extends React.Component {
   }
 
   miniatureOnMouseUp = (event, viewerDom, zoomToFit) => {
-    //this.changeTool(this.previousTool);
     this.onMouseUp1(event, viewerDom, zoomToFit, true);
   }
 

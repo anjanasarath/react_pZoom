@@ -29,7 +29,7 @@ class MiniatureMask extends React.Component {
       cursor: "move"
     }
 
-    let {SVGWidth, SVGHeight, x1, y1, x2, y2, zoomToFit, _uid} = this.props;
+    let {SVGWidth, SVGHeight, x1, y1, x2, y2, _uid} = this.props;
     let maskID = `${prefixID}_mask_${_uid}`
     return (
       <g>
@@ -66,7 +66,6 @@ MiniatureMask.propTypes = {
   y1: PropTypes.number.isRequired,
   x2: PropTypes.number.isRequired,
   y2: PropTypes.number.isRequired,
-  zoomToFit: PropTypes.number.isRequired,
 }
 
 export default RandomUID(MiniatureMask)
