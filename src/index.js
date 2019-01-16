@@ -18,8 +18,8 @@ export class Viewer extends React.Component {
         radius:70,
         right: 600,
         bottom: 300,
-        x: 108,
-        y: 108.5,
+        x: 155,
+        y: 135,
       };
     	this.initDrag = this.initDrag.bind(this);
       this.drag = this.drag.bind(this);
