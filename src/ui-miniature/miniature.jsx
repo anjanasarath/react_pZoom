@@ -105,6 +105,7 @@ export default class Miniature extends React.Component {
               {children}
 
               <MiniatureMask
+                svgElement={this.state.viewerDOM}
                 SVGWidth={SVGWidth}
                 SVGHeight={SVGHeight}
                 x1={x1}

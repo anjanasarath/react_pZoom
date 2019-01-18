@@ -7,21 +7,61 @@ const prefixID = 'react-svg-pan-zoom_miniature'
 class MiniatureMask extends React.Component {
   constructor(props, context) {
     super(props, context);
+    this.state = {
+      offset: null
+    }
+
   }
 
   startDrag = (evt) => {
-    evt.preventDefault();
+    //evt.preventDefault();
+    const mouseCoords = this.getMousePosition(evt);
+    const offSetX = mouseCoords.x-parseFloat(this.zoomElem.getAttributeNS(null,"x"));
+    const offSetY = mouseCoords.y-parseFloat(this.zoomElem.getAttributeNS(null,"y"));
+    this.state.offSet = {
+      x:offSetX,
+      y:offSetY
+    }
     this.props.onMouseDown(evt);
   }
 
   drag = (evt) => {
-    evt.preventDefault();
-    this.props.onMouseMove(evt);
-  }
+    if(this.state.offSet != null){
+  //  evt.preventDefault();
+    const mouseCoords = this.getMousePosition(evt);
+    const zoomElem = this.zoomElem;
+    const maskElem = this.maskElem;
+    const zLeft = mouseCoords.x-this.state.offSet.x;
+    const zTop = mouseCoords.y-this.state.offSet.y;
+    const zRight = zLeft + parseFloat(zoomElem.getAttributeNS(null,"width"));
+    const zBottom = zTop + parseFloat(zoomElem.getAttributeNS(null,"height"));
+
+    const mLeft = parseFloat(maskElem.getAttributeNS(null,"x"));
+    const mTop = parseFloat(maskElem.getAttributeNS(null,"y"));
+    const mRight = mLeft + parseFloat(maskElem.getAttributeNS(null,"width"));
+    const mBottom = mTop + parseFloat(maskElem.getAttributeNS(null,"height"));
+
+    if( zLeft > mLeft && zRight < mRight && zTop > mTop && zBottom < mBottom){
+      this.props.onMouseMove(evt);
+    }
+   }
+ }
 
   endDrag = (evt) => {
-    evt.preventDefault();
+    //evt.preventDefault();
+    this.state.offset = null;
     this.props.onMouseUp(evt);
+  }
+
+  getMousePosition = (evt) => {
+    var pt = this.props.svgElement.createSVGPoint();
+    pt.x = evt.clientX;
+    pt.y = evt.clientY;
+    var result = pt.matrixTransform(evt.target.getScreenCTM().inverse());
+    return {
+      x: result.x,
+      y: result.y
+    };
   }
 
   render() {
@@ -35,8 +75,8 @@ class MiniatureMask extends React.Component {
       <g>
         <defs>
           <mask id={maskID}>
-            <rect x="0" y="0" width={SVGWidth} height={SVGHeight} fill="#ffffff"/>
-            <rect x={x1} y={y1} width={x2 - x1} height={y2 - y1}/>
+            <rect ref={maskElem => this.maskElem = maskElem} x="0" y="0" width={SVGWidth} height={SVGHeight} fill="#ffffff"/>
+            <rect ref={zoomElem => this.zoomElem = zoomElem} x={x1} y={y1} width={x2 - x1} height={y2 - y1}/>
           </mask>
         </defs>
 
