@@ -8,7 +8,7 @@ class MiniatureMask extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      offset: null
+      offSet: null
     }
 
   }
@@ -49,7 +49,7 @@ class MiniatureMask extends React.Component {
 
   endDrag = (evt) => {
     //evt.preventDefault();
-    this.state.offset = null;
+    this.state.offSet = null;
     this.props.onMouseUp(evt);
   }
 
