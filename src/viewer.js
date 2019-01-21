@@ -263,17 +263,18 @@ export default class ReactSVGPanZoom extends React.Component {
     this.handleViewerEvent(event);
   }
 
+  isPanTool = () => (this.getTool() === TOOL_PAN)
+
   miniatureOnMouseDown = (event, viewerDom, zoomToFit) => {
-    this.changeTool(TOOL_PAN);
-    this.onMouseDown1(event, viewerDom, zoomToFit, true);
+    this.onMouseDown1(event, viewerDom, zoomToFit, this.isPanTool());
   }
 
   miniatureOnMouseMove = (event, viewerDom, zoomToFit) => {
-    this.onMouseMove1(event, viewerDom, zoomToFit, true);
+    this.onMouseMove1(event, viewerDom, zoomToFit, this.isPanTool());
   }
 
   miniatureOnMouseUp = (event, viewerDom, zoomToFit) => {
-    this.onMouseUp1(event, viewerDom, zoomToFit, true);
+    this.onMouseUp1(event, viewerDom, zoomToFit, this.isPanTool());
   }
 
   render() {
