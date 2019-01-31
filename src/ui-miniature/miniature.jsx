@@ -44,6 +44,10 @@ export default class Miniature extends React.Component {
     this.props.onMouseUp(event, this.state.viewerDOM, this.getZoomToFit());
   }
 
+  miniMaskOnMouseWheel = (event) => {
+    this.props.onWheel(event, this.state.viewerDOM, this.getZoomToFit());
+  }
+
 
   render() {
     let {value, onChangeValue, position, children, background, SVGBackground, width: miniatureWidth, height: miniatureHeight} = this.props;
@@ -116,6 +120,8 @@ export default class Miniature extends React.Component {
                 onMouseDown={this.miniMaskOnMouseDown}
                 onMouseMove={this.miniMaskOnMouseMove}
                 onMouseUp={this.miniMaskOnMouseUp}
+                onWheel={this.miniMaskOnMouseWheel}
+
               />
             </g>
           </g>

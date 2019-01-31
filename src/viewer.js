@@ -263,6 +263,12 @@ export default class ReactSVGPanZoom extends React.Component {
     this.handleViewerEvent(event);
   }
 
+  onMouseWheel1 = (event, viewerDom, zoomToFit, isMiniMapCoord) => {
+    let coords = this.getCoordinates(event, viewerDom, zoomToFit, isMiniMapCoord);
+    let nextValue = onWheel(event, viewerDom, this.getTool(), this.getValue(), this.props);
+    if (this.getValue() !== nextValue) this.setValue(nextValue);
+  }
+
   isPanTool = () => (this.getTool() === TOOL_PAN)
 
   miniatureOnMouseDown = (event, viewerDom, zoomToFit) => {
@@ -275,6 +281,10 @@ export default class ReactSVGPanZoom extends React.Component {
 
   miniatureOnMouseUp = (event, viewerDom, zoomToFit) => {
     this.onMouseUp1(event, viewerDom, zoomToFit, this.isPanTool());
+  }
+
+  miniatureOnMouseWheel = (event, viewerDom, zoomToFit) => {
+    this.onMouseWheel1(event, viewerDom, zoomToFit, this.isPanTool());
   }
 
   render() {
@@ -320,6 +330,7 @@ export default class ReactSVGPanZoom extends React.Component {
           onMouseDown={event => {this.mouseEvents = true; this.onMouseDown1(event, this.ViewerDOM, 1, false);}}
           onMouseMove={event => {if(this.mouseEvents) this.onMouseMove1(event, this.ViewerDOM, 1, false);}}
           onMouseUp={event => {if(this.mouseEvents) {this.onMouseUp1(event, this.ViewerDOM, 1, false);this.mouseEvents = false;}}}
+          onWheel={event => {this.onMouseWheel1(event, this.ViewerDOM,1,false);}}
 
           onClick={event => {
             this.handleViewerEvent(event)
@@ -329,12 +340,6 @@ export default class ReactSVGPanZoom extends React.Component {
             if (this.getValue() !== nextValue) this.setValue(nextValue);
             this.handleViewerEvent(event);
           }}
-
-          onWheel={event => {
-            let nextValue = onWheel(event, this.ViewerDOM, this.getTool(), this.getValue(), this.props);
-            if (this.getValue() !== nextValue) this.setValue(nextValue);
-          }}
-
           onMouseEnter={event => {
             if (detectTouch()) return;
             let nextValue = onMouseEnterOrLeave(event, this.ViewerDOM, this.getTool(), this.getValue(), this.props);
@@ -436,6 +441,7 @@ export default class ReactSVGPanZoom extends React.Component {
             onMouseDown={this.miniatureOnMouseDown}
             onMouseMove={this.miniatureOnMouseMove}
             onMouseUp={this.miniatureOnMouseUp}
+            onWheel={this.miniatureOnMouseWheel}
           >
             {props.children.props.children}
           </CustomMiniature>

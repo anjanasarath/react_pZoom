@@ -53,6 +53,10 @@ class MiniatureMask extends React.Component {
     this.props.onMouseUp(evt);
   }
 
+  startZoom = (evt) => {
+    this.props.onWheel(evt);
+  }
+
   getMousePosition = (evt) => {
     var pt = this.props.svgElement.createSVGPoint();
     pt.x = evt.clientX;
@@ -84,6 +88,7 @@ class MiniatureMask extends React.Component {
           onMouseDown={this.startDrag}
           onMouseMove={this.drag}
           onMouseUp={this.endDrag}
+          onWheel={this.startZoom}
           x="0"
           y="0"
           width={SVGWidth}
