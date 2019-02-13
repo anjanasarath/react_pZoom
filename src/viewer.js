@@ -386,8 +386,8 @@ export default class ReactSVGPanZoom extends React.Component {
             <rect
               fill={props.SVGBackground}
               style={props.SVGStyle}
-              x={props.children.props.x}
-              y={props.children.props.y}
+              x={0}
+              y={0}
               width={value.SVGWidth}
               height={value.SVGHeight}/>
             <g>

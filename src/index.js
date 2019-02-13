@@ -15,8 +15,6 @@ export class Viewer extends React.Component {
   constructor(props) {
       super(props);
       this.state = {
-        svgX: 0,
-        svgY: 0,
         radius:70,
         right: 600,
         bottom: 300,
@@ -38,19 +36,16 @@ drag(evt){
   //Update x and right when circle moves along x-axis
   if(x+r > initWidth) {
     this.setState({x,right:x+r});
-  } else if(x-r > 0) {
-    this.setState({x, svgX: 0});
-  } else if(x-r < 0) {
-    this.setState({x, svgX:x-r, right:initWidth+r-x});
+  } else if(x-r>0) {
+    this.setState({x});
   }
+
 
   //Update y and bottom when circle moves along y-axis
   if(y+r > initHeight) {
     this.setState({y,bottom:y+r});
   } else if(y-r > 0) {
-    this.setState({y, svgY: 0});
-  } else if(y-r < 0) {
-    this.setState({y, svgY:y-r, bottom:initHeight+r-y});
+    this.setState({y});
   }
 }
 
@@ -72,8 +67,7 @@ endDrag() {
         <svg id='svg-area'
           width={this.state.right}
           height={this.state.bottom}
-          x={this.state.svgX}
-          y={this.state.svgY}>
+          >
             <circle
               onMouseDown={this.initDrag}
               cx={this.state.x}
