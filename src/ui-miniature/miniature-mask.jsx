@@ -11,6 +11,7 @@ class MiniatureMask extends React.Component {
       offSet: null
     }
 
+    this.drag = this.drag.bind(this);
   }
 
   startDrag = (evt) => {
@@ -25,7 +26,7 @@ class MiniatureMask extends React.Component {
     this.props.onMouseDown(evt);
   }
 
-  drag = (evt) => {
+  drag(evt) {
     if(this.state.offSet != null){
   //  evt.preventDefault();
     const mouseCoords = this.getMousePosition(evt);

@@ -235,7 +235,8 @@ export default class ReactSVGPanZoom extends React.Component {
     let y = event.clientY - Math.round(top);
 
     if(isMiniMapCoord) {
-      return {x: -x/zoomToFit, y: -y/zoomToFit};
+      let zoomedValue = this.getValue().a;
+      return {x: -x * zoomedValue / zoomToFit, y: -y * zoomedValue / zoomToFit};
     } else {
       return {x, y};
     }
